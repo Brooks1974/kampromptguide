@@ -6,6 +6,5 @@ export default defineConfig({
   site: 'https://kampromptguide.com',
   redirects: {
     '/prompts': '/',
-    '/prompts/': '/',
   },
 });
