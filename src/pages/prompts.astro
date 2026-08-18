@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PromptCard from '../components/PromptCard.astro';
+import { groups, prompts } from '../data/prompts';
+
+const description =
+  'Twelve copyable prompts from The Key Account Manager’s Guide to Prompting. A Value Matters workbook.';
+---
+
+<BaseLayout
+  title="Prompts | The Key Account Manager’s Guide to Prompting"
+  description={description}
+  current="prompts"
+>
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">The library</p>
+      <h1>Twelve prompts you can steal tonight.</h1>
+      <p class="lead">
+        Paste one into ChatGPT, Claude or Gemini. Check anything that will be said to a customer.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <p class="trust">
+        Check anything that will be said to a customer. Public chatbots do not get NDA material. The
+        polish of the output is not evidence of accuracy.
+      </p>
+
+      <div class="jump-list" style="margin-top: 32px;">
+        {groups.map((group) => (
+          <a href={`#${group.id}`}>{group.label}</a>
+        ))}
+      </div>
+
+      {groups.map((group) => (
+        <section class="library-group" id={group.id} aria-labelledby={`${group.id}-heading`}>
+          <p class="section-kicker">{group.label}</p>
+          <h2 id={`${group.id}-heading`}>{group.label}</h2>
+          <div class="grid" style="gap: 24px;">
+            {prompts
+              .filter((prompt) => prompt.group === group.id)
+              .map((prompt) => (
+                <PromptCard prompt={prompt} />
+              ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
