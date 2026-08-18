@@ -6,10 +6,9 @@ import Footer from '../components/Footer.astro';
 interface Props {
   title: string;
   description: string;
-  current?: 'home' | 'prompts';
 }
 
-const { title, description, current } = Astro.props;
+const { title, description } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 ---
 
@@ -36,7 +35,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
-    <Header current={current} />
+    <Header />
     <main id="main">
       <slot />
     </main>

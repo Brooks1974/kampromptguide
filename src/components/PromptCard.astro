@@ -8,16 +8,14 @@ interface Props {
 const { prompt } = Astro.props;
 ---
 
-<article class="card prompt-card" id={prompt.slug}>
-  <header>
-    <span class="tag">{prompt.tag}</span>
-    <h3>{prompt.title}</h3>
-    <p class="when">{prompt.when}</p>
-  </header>
-
+<article class="prompt-card" id={prompt.slug}>
   {prompt.steps ? (
-    <div>
-      <p class="step-note">Run these as three separate turns, not one paste.</p>
+    <>
+      <div class="prompt-head">
+        <h3>{prompt.title}</h3>
+      </div>
+      <p class="when">{prompt.when}</p>
+      <p class="step-note">Three turns. Copy each one separately.</p>
       <div class="steps">
         {prompt.steps.map((step, index) => {
           const stepId = `${prompt.slug}-step-${index + 1}`;
@@ -29,22 +27,22 @@ const { prompt } = Astro.props;
                   Copy
                 </button>
               </div>
-              <pre id={stepId}><code>{step.text}</code></pre>
+              <div class="prompt-text" id={stepId}>{step.text}</div>
             </div>
           );
         })}
       </div>
-    </div>
+    </>
   ) : (
     <>
-      <div class="prompt-body">
-        <pre id={prompt.slug + '-text'}><code>{prompt.text}</code></pre>
-      </div>
-      <div class="prompt-actions">
-        <button type="button" class="copy-btn" data-copy-target={prompt.slug + '-text'}>
+      <div class="prompt-head">
+        <h3>{prompt.title}</h3>
+        <button type="button" class="copy-btn" data-copy-target={`${prompt.slug}-text`}>
           Copy
         </button>
       </div>
+      <p class="when">{prompt.when}</p>
+      <div class="prompt-text" id={`${prompt.slug}-text`}>{prompt.text}</div>
     </>
   )}
 </article>

@@ -1,83 +1,44 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { groups } from '../data/prompts';
+import PromptCard from '../components/PromptCard.astro';
+import { groups, prompts } from '../data/prompts';
 
 const description =
-  'A Value Matters workbook. Free prompts for key account managers. A weak brief produces weak output.';
+  'A Value Matters workbook. A weak brief produces weak output.';
 ---
 
 <BaseLayout
   title="The Key Account Manager’s Guide to Prompting | Value Matters"
   description={description}
-  current="home"
 >
-  <section class="hero">
-    <div class="wrap">
-      <p class="eyebrow">Value Matters workbook · v3.0 · July 2026</p>
-      <h1>The Key Account Manager’s Guide to Prompting</h1>
-      <p class="lead">A Value Matters workbook. Free prompts you can steal tonight.</p>
-      <div class="intro">
-        <p>A weak brief produces weak output.</p>
-        <p>
-          Treat the AI as an Intelligent Assistant: a capable colleague who needs a proper brief, not
-          magic. This site is the brief. The forthcoming book{' '}
-          <em>Creating Customer Value Propositions with AI</em>{' '}
-          (Davies, Brooks, Holt; Kogan Page, 2027) is how you create the value.
-        </p>
-      </div>
-      <p class="who">Richard Brooks. Classroom and giveaway companion. Paste a prompt into ChatGPT, Claude or Gemini.</p>
-      <div class="ctas">
-        <a class="btn btn-primary" href="/prompts">Open the library</a>
-        <a class="btn btn-ghost-dark" href="#pitfalls">Three pitfalls</a>
-      </div>
-    </div>
-  </section>
+  <header class="intro wrap">
+    <h1>The Key Account Manager’s Guide to Prompting</h1>
+    <p class="lead">A Value Matters workbook. A weak brief produces weak output.</p>
+    <p class="book">
+      <em>Creating Customer Value Propositions with AI</em> (Davies, Brooks, Holt; Kogan Page, 2027)
+      is how you create the value.
+    </p>
+    <p class="pitfalls">
+      Vagueness, overloading, context starvation: get these wrong and the assistant still sounds fluent.
+    </p>
+    <p class="trust">
+      Check anything that will be said to a customer. Public chatbots do not get NDA material. The
+      polish of the output is not evidence of accuracy.
+    </p>
+  </header>
 
-  <section id="pitfalls">
-    <div class="wrap">
-      <p class="section-kicker">The brief</p>
-      <h2>Three pitfalls.</h2>
-      <p class="section-intro">Get these wrong and the assistant will still sound fluent.</p>
-      <div class="grid grid-3">
-        <article class="card">
-          <span class="num">01</span>
-          <h3>Vagueness</h3>
-          <p>Ask for “a QBR deck” and you will get a generic one.</p>
-        </article>
-        <article class="card">
-          <span class="num">02</span>
-          <h3>Overloading</h3>
-          <p>One prompt cannot carry the whole account plan.</p>
-        </article>
-        <article class="card">
-          <span class="num">03</span>
-          <h3>Context Starvation</h3>
-          <p>Without the account, the model fills the gaps for you.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="band-mist" id="library">
-    <div class="wrap">
-      <p class="section-kicker">The library</p>
-      <h2>Twelve prompts. Copy one tonight.</h2>
-      <p class="section-intro">
-        Grouped the way a KAM actually works: brief, research, meetings, renewal, recovery.
-      </p>
-      <div class="jump-list">
-        {groups.map((group) => (
-          <a href={`/prompts#${group.id}`}>{group.label}</a>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <section class="authors" id="authors">
-    <div class="wrap">
-      <p class="section-kicker">Authors</p>
-      <h2>Richard Brooks and Mark Davies.</h2>
-      <p>Value Matters. Visiting faculty at Cranfield.</p>
-    </div>
-  </section>
+  <div class="library wrap" id="library">
+    {groups.map((group) => (
+      <section class="library-group" id={group.id} aria-labelledby={`${group.id}-heading`}>
+        <h2 id={`${group.id}-heading`}>{group.label}</h2>
+        <div class="prompt-list">
+          {prompts
+            .filter((prompt) => prompt.group === group.id)
+            .map((prompt) => (
+              <PromptCard prompt={prompt} />
+            ))}
+        </div>
+      </section>
+    ))}
+  </div>
 </BaseLayout>

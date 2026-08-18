@@ -1,11 +1,5 @@
 ---
 import VmMark from './VmMark.astro';
-
-interface Props {
-  current?: 'home' | 'prompts';
-}
-
-const { current } = Astro.props;
 ---
 
 <nav>
@@ -15,8 +9,7 @@ const { current } = Astro.props;
       Value Matters
     </a>
     <div class="nav-links">
-      <a href="/" aria-current={current === 'home' ? 'page' : undefined}>The guide</a>
-      <a href="/prompts" aria-current={current === 'prompts' ? 'page' : undefined}>Prompts</a>
+      <a href="/#library">The guide</a>
     </div>
   </div>
 </nav>

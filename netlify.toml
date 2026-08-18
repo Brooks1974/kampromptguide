@@ -4,3 +4,13 @@
 
 [build.environment]
   NODE_VERSION = "22"
+
+[[redirects]]
+  from = "/prompts"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/prompts/"
+  to = "/"
+  status = 301
