@@ -14,5 +14,5 @@ export const organizationLd = {
   '@type': 'Organization',
   name: SITE_NAME,
   url: ORG_URL,
-  sameAs: [ORG_LINKEDIN],
+  sameAs: [ORG_LINKEDIN, 'https://www.linkedin.com/in/markdavies690'],
 };

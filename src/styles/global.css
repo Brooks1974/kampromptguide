@@ -202,7 +202,55 @@ nav {
 }
 
 .talk-jump {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+}
+
+.who {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  margin: 0 0 22px;
+}
+
+.who-faces {
+  display: flex;
+  gap: 16px;
+  list-style: none;
+}
+
+.who-faces a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-navy);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.who-faces a:hover {
+  color: var(--color-azure-ink);
+}
+
+.who-faces img {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--color-hairline);
+}
+
+.who p {
+  font-size: 14px;
+  color: var(--color-body);
+}
+
+.how .who {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-hairline);
 }
 
 .how-jump a,

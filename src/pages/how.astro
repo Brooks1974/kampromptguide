@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import WhoWeAre from '../components/WhoWeAre.astro';
 import { pageUrl } from '../lib/site';
 
 const steps = [
@@ -72,5 +73,6 @@ const jsonLd = [
       {' '}<a href="/prompts/sequential-chain">Sequential chain</a>. The
       {' '}<a href="/prompts/meta-prompt">Meta-prompt</a> writes this brief when notes are messy.
     </p>
+    <WhoWeAre />
   </article>
 </BaseLayout>

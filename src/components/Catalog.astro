@@ -2,6 +2,7 @@
 import { filterPills, groups, prompts } from '../data/prompts';
 import { chapterOf, pillsOf, searchBlob } from '../lib/prompt-text';
 import PromptCard from './PromptCard.astro';
+import WhoWeAre from './WhoWeAre.astro';
 
 const startPrompts = [...prompts]
   .filter((prompt) => prompt.startN)
@@ -23,6 +24,7 @@ const startPrompts = [...prompts]
   </div>
   <p class="how-jump"><a href="/how">How we brief →</a></p>
   <p class="talk-jump"><a href="mailto:richard@value-matters.net">Talk to us →</a></p>
+  <WhoWeAre />
 
   <label class="search">
     <span class="visually-hidden">Search prompts</span>
