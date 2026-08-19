@@ -651,11 +651,29 @@ footer {
 }
 
 .foot-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
   background: var(--color-navy-support);
   border: 1px solid rgba(219, 228, 240, 0.16);
-  border-left: 3px solid var(--color-orange);
   border-radius: 16px;
   padding: 20px 24px;
+}
+
+.foot-copy {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.foot-mark {
+  display: none;
+  flex: 0 0 auto;
+  width: 160px;
+  height: auto;
+  color: var(--color-on-navy);
+  opacity: 0.22;
+  pointer-events: none;
 }
 
 .foot-eye {
@@ -973,6 +991,10 @@ footer {
 }
 
 @media (min-width: 720px) {
+  .foot-mark {
+    display: block;
+  }
+
   .page {
     padding-top: 36px;
   }
