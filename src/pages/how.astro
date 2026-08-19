@@ -1,10 +1,38 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { pageUrl } from '../lib/site';
+
+const steps = [
+  'Role: who the assistant is (usually a KAM; say if they sit buy-side or supply-side).',
+  'Context: the account, the moment, what you attach (notes, transcript, report).',
+  'Research: what to look at and what not to invent.',
+  'Competitors: who else is in the conversation.',
+  'Constraints: what it must not do.',
+  'The job: one job per prompt.',
+  'Audience: who reads the output.',
+  'Format: email, five reasons, three proofs, under 200 words.',
+];
+
+const jsonLd = [
+  {
+    '@type': 'HowTo',
+    name: 'How we brief',
+    description:
+      'Every prompt is built from role, context, research, competitors, constraints, the job, audience, and format.',
+    url: pageUrl('/how'),
+    step: steps.map((text, index) => ({
+      '@type': 'HowToStep',
+      position: index + 1,
+      text,
+    })),
+  },
+];
 ---
 
 <BaseLayout
-  title="How we brief | Value Matters"
+  title="How we brief | KAM prompt guide"
   description="Every prompt is built from role, context, research, competitors, constraints, the job, audience, and format."
+  jsonLd={jsonLd}
 >
   <article class="workbook wrap how">
     <p class="crumb">

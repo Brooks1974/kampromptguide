@@ -18,12 +18,12 @@ const parts = splitPromptText(text, slots);
         part.value
       ) : (
         <input
-          class="slot"
+          class="slot is-empty"
           type="text"
           data-slot={part.slot.key}
           data-placeholder={part.slot.placeholder}
           data-sample={part.slot.sample}
-          value=""
+          value={part.slot.placeholder}
           placeholder={part.slot.placeholder}
           aria-label={part.slot.label ?? part.slot.key}
           size={Math.max(part.slot.placeholder.length, 8)}

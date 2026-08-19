@@ -4,6 +4,7 @@ import PromptWorkspace from '../../components/PromptWorkspace.astro';
 import { prompts } from '../../data/prompts';
 import { pageFor, relatedPrompt } from '../../data/prompt-pages';
 import { chapterOf, verbOf } from '../../lib/prompt-text';
+import { SITE_NAME, pageUrl } from '../../lib/site';
 
 export function getStaticPaths() {
   return prompts.map((prompt) => ({
@@ -21,11 +22,22 @@ if (!page) {
 const related = relatedPrompt(prompt.slug);
 const chapter = chapterOf(prompt);
 const verb = verbOf(prompt);
+const jsonLd = [
+  {
+    '@type': 'TechArticle',
+    name: prompt.title,
+    headline: prompt.title,
+    description: prompt.when,
+    url: pageUrl(`/prompts/${prompt.slug}`),
+    author: { '@type': 'Organization', name: SITE_NAME },
+  },
+];
 ---
 
 <BaseLayout
-  title={`${prompt.title} | Value Matters`}
+  title={`${prompt.title} | KAM prompt guide`}
   description={prompt.when}
+  jsonLd={jsonLd}
 >
   <article class="workbook wrap">
     <p class="crumb">

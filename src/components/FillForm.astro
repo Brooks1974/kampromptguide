@@ -10,6 +10,7 @@ const { slots } = Astro.props;
 
 <form class="fill-form" data-fill-form>
   <p class="fill-title">Fill this in</p>
+  <p class="fill-job">Fill the slots. The prompt rebuilds. Then Copy.</p>
   {
     slots.map((slot) => (
       <label class="fill-field">

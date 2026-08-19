@@ -105,12 +105,17 @@ nav {
 
 .nav-inner {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  gap: 10px 12px;
   max-width: var(--wrap);
   margin: 0 auto;
   padding: 16px 20px;
+}
+
+.nav-pipe {
+  color: var(--color-hairline);
+  font-weight: 600;
 }
 
 .mark {
@@ -167,36 +172,47 @@ nav {
   font: inherit;
   font-size: 16px;
   color: var(--color-navy);
-  outline: none;
 }
 
 .search input::placeholder {
   color: var(--color-muted-ink);
 }
 
+.catalog > h1 {
+  font-size: 32px;
+  margin: 0 0 16px;
+  line-height: 1.2;
+}
+
 .intro {
   font-size: 15px;
   color: var(--color-body);
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 
-.intro em {
-  font-style: italic;
-  color: var(--color-navy);
+.intro p + p {
+  margin-top: 12px;
 }
 
-.how-jump {
-  margin: -8px 0 18px;
+.how-jump,
+.talk-jump {
+  margin: 0 0 10px;
   font-size: 15px;
   font-weight: 600;
 }
 
-.how-jump a {
+.talk-jump {
+  margin-bottom: 20px;
+}
+
+.how-jump a,
+.talk-jump a {
   color: var(--color-azure-ink);
   text-decoration: none;
 }
 
-.how-jump a:hover {
+.how-jump a:hover,
+.talk-jump a:hover {
   color: var(--color-navy);
 }
 
@@ -403,7 +419,13 @@ nav {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-navy);
-  margin-bottom: 12px;
+  margin-bottom: 6px;
+}
+
+.fill-job {
+  font-size: 14px;
+  color: var(--color-body);
+  margin-bottom: 8px;
 }
 
 .fill-field {
@@ -510,9 +532,15 @@ nav {
   field-sizing: content;
 }
 
+.slot.is-empty {
+  color: var(--color-azure-ink);
+  font-style: italic;
+}
+
 .slot:focus {
   border-bottom-style: solid;
-  outline: none;
+  outline: 3px solid var(--color-azure);
+  outline-offset: 2px;
   background: #fff;
 }
 
@@ -536,7 +564,8 @@ nav {
   cursor: pointer;
 }
 
-.copy-btn:hover {
+.copy-btn:hover,
+.copy-btn:focus-visible {
   background: #45c8ff;
 }
 

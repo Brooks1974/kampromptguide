@@ -14,3 +14,7 @@
   from = "/prompts/"
   to = "/"
   status = 301
+
+[[edge_functions]]
+  function = "preview-robots"
+  path = "/*"
