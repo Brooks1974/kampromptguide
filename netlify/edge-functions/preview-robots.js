@@ -1,15 +1,18 @@
 export default async (request, context) => {
-  const response = await context.next();
-  const host = new URL(request.url).hostname;
-  if (!host.endsWith('netlify.app')) return response;
+  const url = new URL(request.url);
+  if (url.pathname === '/sitemap.xml' || url.pathname === '/robots.txt') {
+    return;
+  }
 
-  const headers = new Headers(response.headers);
-  headers.set('X-Robots-Tag', 'noindex, nofollow');
-  return new Response(response.body, {
-    status: response.status,
-    statusText: response.statusText,
-    headers,
-  });
+  const response = await context.next();
+  if (!url.hostname.endsWith('netlify.app')) return response;
+
+  try {
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+  } catch {
+    // Immutable headers: leave the origin response as-is.
+  }
+  return response;
 };
 
 export const config = { path: '/*' };
