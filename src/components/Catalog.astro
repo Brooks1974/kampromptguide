@@ -1,12 +1,14 @@
 ---
 import { filterPills, groups, prompts } from '../data/prompts';
+import { chapterOf, pillsOf, searchBlob } from '../lib/prompt-text';
 import PromptCard from './PromptCard.astro';
 
-const startView = Astro.url.searchParams.get('view') !== 'all';
-const startCount = prompts.filter((prompt) => prompt.startN).length;
+const startPrompts = [...prompts]
+  .filter((prompt) => prompt.startN)
+  .sort((a, b) => (a.startN ?? 0) - (b.startN ?? 0));
 ---
 
-<div class="catalog" data-catalog data-view={startView ? 'start' : 'all'}>
+<div class="catalog" data-catalog data-view="start">
   <label class="search">
     <span class="visually-hidden">Search prompts</span>
     <input type="search" data-search placeholder="Search prompts…" autocomplete="off" />
@@ -19,7 +21,7 @@ const startCount = prompts.filter((prompt) => prompt.startN).length;
 
   <div class="toolbar">
     <div class="pills" data-pills>
-      <button type="button" class:list={['pill', 'pill-start', { on: startView }]} data-filter="start" aria-pressed={startView}>
+      <button type="button" class="pill pill-start on" data-filter="start" aria-pressed="true">
         Start here
       </button>
       <span class="sep" aria-hidden="true"></span>
@@ -30,27 +32,56 @@ const startCount = prompts.filter((prompt) => prompt.startN).length;
       ))}
       <button type="button" class="clear" data-clear hidden>Clear</button>
     </div>
-    <p class="count" data-count>{startView ? `${startCount} prompts` : `${prompts.length} prompts`}</p>
+    <p class="count" data-count>{`${prompts.length} prompts`}</p>
   </div>
 
-  <p class="start-heading" data-start-heading hidden={!startView}>Five prompts to try first</p>
+  <div class="start-set" data-start-set>
+    <p class="start-heading">Five prompts to try first</p>
+    <div class="results">
+      {startPrompts.map((prompt) => (
+        <PromptCard prompt={prompt} />
+      ))}
+    </div>
+    <a class="show-all" href="#all-prompts" data-show-all>Show all {prompts.length} prompts →</a>
+  </div>
 
-  <div class="results">
-    {groups.map((group) => (
-      <section class="group" data-group-section={group.id}>
-        <h2 class="group-h" data-group-h={group.id} hidden={startView}>{group.label}</h2>
-        {prompts
-          .filter((prompt) => prompt.group === group.id)
-          .map((prompt) => (
-            <PromptCard prompt={prompt} />
-          ))}
-      </section>
-    ))}
+  <div class="index" id="all-prompts">
+    <p class="start-heading">All 12</p>
+    <div class="index-wrap">
+      <table class="index-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>When</th>
+            <th>Chapter</th>
+          </tr>
+        </thead>
+        <tbody>
+          {groups.map((group) =>
+            prompts
+              .filter((prompt) => prompt.group === group.id)
+              .map((prompt) => (
+                <tr
+                  data-index-slug={prompt.slug}
+                  data-pills={pillsOf(prompt).join(' ')}
+                  data-search={searchBlob(prompt)}
+                  data-start={prompt.startN}
+                  id={prompt.startN ? `row-${prompt.slug}` : prompt.slug}
+                >
+                  <td>
+                    <a href={`/prompts/${prompt.slug}`}>{prompt.title}</a>
+                  </td>
+                  <td>{prompt.when}</td>
+                  <td>{chapterOf(prompt)}</td>
+                </tr>
+              )),
+          )}
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <p class="empty" data-empty hidden>No prompts match. <button type="button" class="clear" data-clear>Clear</button></p>
-
-  <a class="show-all" href="/?view=all" data-show-all hidden={!startView}>Show all {prompts.length} prompts →</a>
 </div>
 
 <script>
@@ -58,15 +89,15 @@ const startCount = prompts.filter((prompt) => prompt.startN).length;
   if (catalog) {
     const searchInput = catalog.querySelector<HTMLInputElement>('[data-search]');
     const countEl = catalog.querySelector<HTMLElement>('[data-count]');
-    const startHeading = catalog.querySelector<HTMLElement>('[data-start-heading]');
-    const showAll = catalog.querySelector<HTMLElement>('[data-show-all]');
+    const startSet = catalog.querySelector<HTMLElement>('[data-start-set]');
     const empty = catalog.querySelector<HTMLElement>('[data-empty]');
     const cards = [...catalog.querySelectorAll<HTMLDetailsElement>('[data-slug]')];
-    const headings = [...catalog.querySelectorAll<HTMLElement>('[data-group-h]')];
+    const rows = [...catalog.querySelectorAll<HTMLTableRowElement>('[data-index-slug]')];
     const filterButtons = [...catalog.querySelectorAll<HTMLButtonElement>('[data-filter]')];
     const clearButtons = [...catalog.querySelectorAll<HTMLButtonElement>('[data-clear]')];
+    const showAll = catalog.querySelector<HTMLAnchorElement>('[data-show-all]');
 
-    let view = catalog.dataset.view === 'all' ? 'all' : 'start';
+    let view = 'start';
     let query = '';
 
     const setHash = (slug: string | null) => {
@@ -75,79 +106,23 @@ const startCount = prompts.filter((prompt) => prompt.startN).length;
       history.replaceState(null, '', url);
     };
 
-    const assemble = (box: HTMLElement) => {
-      let text = '';
-      const walk = (node: Node) => {
-        if (node.nodeType === Node.TEXT_NODE) {
-          text += node.textContent ?? '';
-          return;
-        }
-        if (node instanceof HTMLInputElement) {
-          text += node.value || node.dataset.sample || node.dataset.placeholder || '';
-          return;
-        }
-        node.childNodes.forEach(walk);
-      };
-      walk(box);
-      return text;
-    };
-
-    const copyText = async (text: string, button: HTMLButtonElement) => {
-      try {
-        await navigator.clipboard.writeText(text);
-      } catch {
-        const area = document.createElement('textarea');
-        area.value = text;
-        area.setAttribute('readonly', '');
-        area.style.position = 'fixed';
-        area.style.left = '-9999px';
-        document.body.appendChild(area);
-        area.select();
-        document.execCommand('copy');
-        area.remove();
-      }
-      const previous = button.textContent;
-      button.textContent = 'Copied';
-      button.dataset.copied = 'true';
-      window.setTimeout(() => {
-        button.textContent = previous;
-        delete button.dataset.copied;
-      }, 1600);
-    };
-
     const apply = () => {
       const q = query.trim().toLowerCase();
-      const groupCounts: Record<string, number> = {};
       let visible = 0;
 
-      for (const card of cards) {
-        const matchQuery = !q || (card.dataset.search ?? '').includes(q);
-        const matchView = q
+      for (const row of rows) {
+        const matchQuery = !q || (row.dataset.search ?? '').includes(q);
+        const matchView = q || view === 'start' || view === 'all'
           ? true
-          : view === 'start'
-            ? Boolean(card.dataset.start)
-            : view === 'all'
-              ? true
-              : (card.dataset.pills ?? '').split(' ').includes(view);
+          : (row.dataset.pills ?? '').split(' ').includes(view);
         const on = matchQuery && matchView;
-        card.hidden = !on;
-        if (on) {
-          visible += 1;
-          const group = card.dataset.group;
-          if (group) groupCounts[group] = (groupCounts[group] || 0) + 1;
-        }
+        row.hidden = !on;
+        if (on) visible += 1;
       }
 
-      const showHeadings = Boolean(q) || view === 'all' || view !== 'start';
-      for (const heading of headings) {
-        const group = heading.dataset.groupH ?? '';
-        heading.hidden = !showHeadings || !groupCounts[group];
-      }
-
+      if (startSet) startSet.hidden = Boolean(q) || (view !== 'start' && view !== 'all');
       catalog.dataset.view = q ? 'search' : view;
       if (countEl) countEl.textContent = visible === 1 ? '1 prompt' : `${visible} prompts`;
-      if (startHeading) startHeading.hidden = !(view === 'start' && !q);
-      if (showAll) showAll.hidden = !(view === 'start' && !q);
       if (empty) empty.hidden = visible !== 0;
 
       for (const button of filterButtons) {
@@ -157,24 +132,30 @@ const startCount = prompts.filter((prompt) => prompt.startN).length;
         button.setAttribute('aria-pressed', on ? 'true' : 'false');
       }
 
-      const filtered = Boolean(q) || view !== 'start';
+      const filtered = Boolean(q) || (view !== 'start' && view !== 'all');
       for (const button of clearButtons) button.hidden = !filtered;
     };
 
     const openSlug = (slug: string) => {
       const card = cards.find((item) => item.dataset.slug === slug);
-      if (!card) return;
-      if (card.hidden || (view === 'start' && !card.dataset.start)) {
-        view = 'all';
+      if (card) {
+        view = 'start';
+        apply();
+        card.open = true;
+        card.scrollIntoView({ block: 'start', behavior: 'smooth' });
+        return;
       }
-      apply();
-      card.open = true;
-      card.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      const row = rows.find((item) => item.dataset.indexSlug === slug);
+      if (row) {
+        view = 'all';
+        apply();
+        row.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        row.classList.add('is-target');
+      }
     };
 
     searchInput?.addEventListener('input', () => {
       query = searchInput.value;
-      if (query) view = view === 'start' ? 'all' : view;
       apply();
     });
 
@@ -184,9 +165,9 @@ const startCount = prompts.filter((prompt) => prompt.startN).length;
         if (searchInput) searchInput.value = '';
         const id = button.dataset.filter ?? 'start';
         if (id === 'start') {
-          view = view === 'start' ? 'all' : 'start';
+          view = 'start';
         } else {
-          view = view === id ? 'all' : id;
+          view = view === id ? 'start' : id;
         }
         apply();
       });
@@ -203,10 +184,7 @@ const startCount = prompts.filter((prompt) => prompt.startN).length;
 
     showAll?.addEventListener('click', (event) => {
       event.preventDefault();
-      query = '';
-      view = 'all';
-      if (searchInput) searchInput.value = '';
-      apply();
+      document.getElementById('all-prompts')?.scrollIntoView({ block: 'start', behavior: 'smooth' });
     });
 
     catalog.addEventListener('toggle', (event) => {
@@ -222,29 +200,13 @@ const startCount = prompts.filter((prompt) => prompt.startN).length;
       }
     }, true);
 
-    catalog.addEventListener('click', async (event) => {
-      const target = event.target;
-      if (!(target instanceof Element)) return;
-      const button = target.closest<HTMLButtonElement>('[data-copy]');
-      if (!button) return;
-      const box = button.closest('.prompt-box')?.querySelector<HTMLElement>('[data-assemble]');
-      if (!box) return;
-      await copyText(assemble(box), button);
-    });
-
-    catalog.addEventListener('input', (event) => {
-      const input = event.target;
-      if (!(input instanceof HTMLInputElement) || !input.classList.contains('slot')) return;
-      input.size = Math.max(input.value.length, 8);
-    });
-
     apply();
 
     const initial = window.location.hash.replace('#', '');
-    if (initial && initial !== 'library') openSlug(initial);
+    if (initial && initial !== 'library' && initial !== 'all-prompts') openSlug(initial);
     window.addEventListener('hashchange', () => {
       const slug = window.location.hash.replace('#', '');
-      if (slug && slug !== 'library') openSlug(slug);
+      if (slug && slug !== 'library' && slug !== 'all-prompts') openSlug(slug);
     });
   }
 </script>

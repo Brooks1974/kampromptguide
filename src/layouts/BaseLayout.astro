@@ -46,5 +46,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
       <slot />
     </main>
     <Footer />
+    <script>
+      import { bindCopy } from '../scripts/copy-assemble';
+      bindCopy(document);
+    </script>
   </body>
 </html>

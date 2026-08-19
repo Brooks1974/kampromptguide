@@ -516,6 +516,196 @@ footer {
   color: var(--accent);
 }
 
+.card-page {
+  margin-top: 14px;
+  font-size: 14px;
+}
+
+.card-page a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.card-page a:hover {
+  text-decoration: underline;
+}
+
+.index {
+  margin-top: 40px;
+  scroll-margin-top: 72px;
+}
+
+.index-wrap {
+  overflow-x: auto;
+  background: var(--paper-card);
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
+}
+
+.index-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.index-table th,
+.index-table td {
+  text-align: left;
+  padding: 10px 14px;
+  vertical-align: top;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.index-table th {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--faint);
+  font-weight: 600;
+}
+
+.index-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.index-table a {
+  color: var(--navy);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.index-table a:hover {
+  color: var(--accent);
+}
+
+.index-table td:nth-child(2) {
+  color: var(--muted);
+}
+
+.index-table td:nth-child(3) {
+  white-space: nowrap;
+  color: var(--faint);
+}
+
+.index-table tr.is-target {
+  background: var(--accent-soft);
+}
+
+.workbook {
+  padding: 32px 0 72px;
+}
+
+.workbook h1 {
+  font-family: var(--font-display);
+  font-size: 34px;
+  font-weight: 600;
+  color: var(--navy);
+  letter-spacing: -0.02em;
+  margin: 0 0 32px;
+}
+
+.crumb {
+  font-size: 14px;
+  color: var(--faint);
+  margin-bottom: 18px;
+}
+
+.crumb a {
+  color: var(--navy);
+  text-decoration: none;
+}
+
+.kicker {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.block {
+  padding: 28px 0;
+  border-top: 1px solid var(--hairline);
+}
+
+.block h2 {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 12px;
+}
+
+.lead-line {
+  font-size: 17px;
+  color: var(--navy);
+  margin-bottom: 12px;
+}
+
+.block ul {
+  padding-left: 1.1em;
+  color: var(--muted);
+}
+
+.block li + li {
+  margin-top: 6px;
+}
+
+.needs {
+  display: grid;
+  gap: 4px 16px;
+}
+
+.needs dt {
+  font-weight: 600;
+  color: var(--navy);
+  margin-top: 10px;
+}
+
+.needs dt:first-child {
+  margin-top: 0;
+}
+
+.needs dd {
+  color: var(--muted);
+}
+
+.example-label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 8px;
+}
+
+.example {
+  font-family: var(--font-display);
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--navy);
+}
+
+.related {
+  margin-top: 8px;
+  padding-top: 28px;
+  border-top: 1px solid var(--hairline);
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.related a {
+  color: var(--navy);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.related a:hover {
+  color: var(--accent);
+}
+
 @media (min-width: 720px) {
   .page {
     padding-top: 36px;

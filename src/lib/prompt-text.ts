@@ -1,4 +1,5 @@
-import type { Prompt, PromptSlot } from '../data/prompts';
+import { groups, type Prompt, type PromptSlot } from '../data/prompts';
+import { chapterVerb } from '../data/prompt-pages';
 
 export type PromptPart =
   | { type: 'text'; value: string }
@@ -61,4 +62,12 @@ export function pillsOf(prompt: Prompt): string[] {
   if (prompt.slug === 'vet-group-margins') pills.push('animal-health');
   if (prompt.slug === 'plant-director-proof') pills.push('manufacturing');
   return pills;
+}
+
+export function chapterOf(prompt: Prompt): string {
+  return groups.find((group) => group.id === prompt.group)?.label ?? prompt.group;
+}
+
+export function verbOf(prompt: Prompt): string {
+  return chapterVerb[prompt.group];
 }
