@@ -26,7 +26,8 @@ const parts = splitPromptText(text, slots);
           value=""
           placeholder={part.slot.placeholder}
           aria-label={part.slot.label ?? part.slot.key}
-          size={Math.max(part.slot.placeholder.length, part.slot.key.length, 8)}
+          size={Math.max(part.slot.placeholder.length, 8)}
+          style={`min-width: ${Math.max(part.slot.placeholder.length, 8)}ch`}
         />
       ),
     )

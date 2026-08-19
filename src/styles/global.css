@@ -506,6 +506,7 @@ nav {
   padding: 1px 5px;
   margin: 0 1px;
   max-width: 100%;
+  min-width: 8ch;
   field-sizing: content;
 }
 

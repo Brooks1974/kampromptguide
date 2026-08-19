@@ -37,7 +37,7 @@ const customerName: PromptSlot = {
 const competitorName: PromptSlot = {
   key: 'Competitor Name',
   placeholder: '[Competitor Name]',
-  sample: 'the named rival',
+  sample: 'Apex',
   label: 'Competitor name',
   hint: 'The rival in the conversation.',
 };
@@ -72,14 +72,14 @@ export const prompts: Prompt[] = [
       {
         key: 'sector',
         placeholder: '[sector]',
-        sample: 'their industry',
+        sample: 'distribution',
         label: 'Sector',
         hint: 'Their industry, in their words.',
       },
       {
         key: 'pressures',
         placeholder: '[pressures]',
-        sample: 'the squeeze this quarter',
+        sample: 'cost and labour',
         label: 'Pressures',
         hint: 'What is squeezing them this quarter.',
       },
@@ -362,7 +362,7 @@ Direct, professional, and solution-focused.
       {
         key: 'initiative',
         placeholder: '[initiative]',
-        sample: 'the initiative on the table',
+        sample: 'cost recovery',
         label: 'Initiative',
         hint: 'The specific programme or move, not the sector.',
       },
@@ -420,14 +420,14 @@ Direct, professional, and solution-focused.
       {
         key: 'metric',
         placeholder: '[metric]',
-        sample: 'the metric they asked about',
+        sample: 'on-time delivery',
         label: 'Metric',
         hint: 'The number they want compared.',
       },
       {
         key: 'audience',
         placeholder: '[audience]',
-        sample: 'the person who asked',
+        sample: 'CFO',
         label: 'Audience',
         hint: 'Who will read the comparison.',
       },
@@ -446,7 +446,7 @@ Direct, professional, and solution-focused.
       {
         key: 'priority',
         placeholder: '[priority]',
-        sample: 'the priority they named',
+        sample: 'cost recovery',
         label: 'Priority',
         hint: 'Their job, in their words.',
       },
@@ -484,21 +484,21 @@ Direct, professional, and solution-focused.
       {
         key: 'executive',
         placeholder: '[executive]',
-        sample: 'the senior you want in the room',
+        sample: 'COO',
         label: 'Executive',
         hint: 'The title of the person you are inviting.',
       },
       {
         key: 'event',
         placeholder: '[event]',
-        sample: 'the session',
+        sample: 'supplier day',
         label: 'Event',
         hint: 'What you are asking them to attend.',
       },
       {
         key: 'priority',
         placeholder: '[priority]',
-        sample: 'the priority they own',
+        sample: 'cost recovery',
         label: 'Priority',
         hint: 'Their job, not our agenda.',
       },
@@ -517,7 +517,7 @@ Direct, professional, and solution-focused.
       {
         key: 'recipient',
         placeholder: '[recipient]',
-        sample: 'the person you just met',
+        sample: 'VP of Procurement',
         label: 'Recipient',
         hint: 'Who the email is for.',
       },
@@ -562,7 +562,7 @@ Direct, professional, and solution-focused.
       {
         key: 'bottlenecks',
         placeholder: '[bottlenecks]',
-        sample: 'the bottlenecks you named',
+        sample: 'slow onboarding',
         label: 'Bottlenecks',
         hint: 'The pains you already agree on.',
       },
@@ -581,7 +581,7 @@ Direct, professional, and solution-focused.
       {
         key: 'background',
         placeholder: '[background]',
-        sample: 'the short background you would give a colleague',
+        sample: 'renewal in 90 days, new sponsor',
         label: 'Background',
         hint: 'A few lines. Not the whole file.',
       },
@@ -629,7 +629,7 @@ Direct, professional, and solution-focused.
       {
         key: 'recipient',
         placeholder: '[recipient]',
-        sample: 'the commercial contact',
+        sample: 'VP of Procurement',
         label: 'Recipient',
         hint: 'Who the notice is addressed to.',
       },
@@ -655,7 +655,7 @@ Direct, professional, and solution-focused.
       {
         key: 'timeline',
         placeholder: '[timeline]',
-        sample: 'the dates you already have',
+        sample: 'go-live in June',
         label: 'Timeline',
         hint: 'What they told you about the first 90 days.',
       },
@@ -713,14 +713,14 @@ Direct, professional, and solution-focused.
       {
         key: 'executive',
         placeholder: '[executive]',
-        sample: 'the person on the call',
+        sample: 'COO',
         label: 'Executive',
         hint: 'Who you are speaking to.',
       },
       {
         key: 'issue',
         placeholder: '[issue]',
-        sample: 'the issue on the call',
+        sample: 'missed cut-off',
         label: 'Issue',
         hint: 'What the call is about, in plain words.',
       },
@@ -739,7 +739,7 @@ Direct, professional, and solution-focused.
       {
         key: 'new-area',
         placeholder: '[new-area]',
-        sample: 'another part of the group',
+        sample: 'the north region',
         label: 'New area',
         hint: 'Where they want you next.',
       },
@@ -758,7 +758,7 @@ Direct, professional, and solution-focused.
       {
         key: 'proposal',
         placeholder: '[proposal]',
-        sample: 'the proposal on the table',
+        sample: 'the 5 percent renewal',
         label: 'Proposal',
         hint: 'What they will challenge.',
       },
@@ -777,7 +777,7 @@ Direct, professional, and solution-focused.
       {
         key: 'recipient',
         placeholder: '[recipient]',
-        sample: 'the person who needs the follow-up',
+        sample: 'VP of Procurement',
         label: 'Recipient',
         hint: 'Who the short follow-up is for.',
       },
@@ -805,7 +805,7 @@ Direct, professional, and solution-focused.
       {
         key: 'live prompt',
         placeholder: '[live prompt]',
-        sample: 'the prompt that worked',
+        sample: 'Draft a QBR agenda that is not a generic pack',
         label: 'The live prompt',
         hint: 'Paste the prompt that worked, names and all.',
       },

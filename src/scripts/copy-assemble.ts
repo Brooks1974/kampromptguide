@@ -51,7 +51,9 @@ function syncFill(scope: ParentNode, key: string, value: string, source: HTMLInp
     field.value = value;
     if (field.classList.contains('slot')) {
       const fallback = field.dataset.placeholder ?? key;
-      field.size = Math.max(value.length || fallback.length, 8);
+      const width = Math.max((value || fallback).length, 8);
+      field.size = width;
+      field.style.minWidth = `${width}ch`;
     }
   }
 }
@@ -86,7 +88,9 @@ export function bindCopy(root: ParentNode = document): void {
 
     if (input.classList.contains('slot')) {
       const fallback = input.dataset.placeholder ?? input.dataset.slot ?? '';
-      input.size = Math.max(input.value.length || fallback.length, 8);
+      const width = Math.max((input.value.trim() || fallback).length, 8);
+      input.size = width;
+      input.style.minWidth = `${width}ch`;
     }
   });
 }
