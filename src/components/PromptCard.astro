@@ -1,7 +1,7 @@
 ---
 import type { Prompt } from '../data/prompts';
 import { pillsOf, previewText, searchBlob } from '../lib/prompt-text';
-import PromptRun from './PromptRun.astro';
+import PromptWorkspace from './PromptWorkspace.astro';
 
 interface Props {
   prompt: Prompt;
@@ -33,35 +33,7 @@ const pills = pillsOf(prompt).join(' ');
   </summary>
 
   <div class="card-body">
-    {prompt.steps ? (
-      <>
-        <p class="card-label">Three turns. Copy each one separately.</p>
-        {prompt.steps.map((step) => (
-          <div class="prompt-box">
-            <p class="step-label">{step.label}</p>
-            <PromptRun text={step.text} />
-            <button type="button" class="copy-btn" data-copy>
-              Copy
-            </button>
-          </div>
-        ))}
-      </>
-    ) : (
-      <>
-        <p class="card-label">{prompt.slots?.length ? 'Fill in and copy' : 'Copy this prompt'}</p>
-        {prompt.slots?.length ? (
-          <p class="slot-hint">
-            Type in the <span class="hint-chip">highlighted</span> slots, then copy.
-          </p>
-        ) : null}
-        <div class="prompt-box">
-          <PromptRun text={prompt.text ?? ''} slots={prompt.slots} />
-          <button type="button" class="copy-btn" data-copy>
-            Copy
-          </button>
-        </div>
-      </>
-    )}
+    <PromptWorkspace prompt={prompt} />
 
     <p class="why-label">Why this works</p>
     <p class="why">{prompt.teaches}</p>

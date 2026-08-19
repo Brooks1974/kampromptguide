@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PromptRun from '../../components/PromptRun.astro';
+import PromptWorkspace from '../../components/PromptWorkspace.astro';
 import { prompts } from '../../data/prompts';
 import { pageFor, relatedPrompt } from '../../data/prompt-pages';
 import { chapterOf, verbOf } from '../../lib/prompt-text';
@@ -60,34 +60,7 @@ const verb = verbOf(prompt);
 
     <section class="block" id="prompt">
       <h2>The prompt</h2>
-      {prompt.steps ? (
-        <>
-          <p class="slot-hint">Three turns. Copy each one separately.</p>
-          {prompt.steps.map((step) => (
-            <div class="prompt-box">
-              <p class="step-label">{step.label}</p>
-              <PromptRun text={step.text} />
-              <button type="button" class="copy-btn" data-copy>
-                Copy
-              </button>
-            </div>
-          ))}
-        </>
-      ) : (
-        <>
-          {prompt.slots?.length ? (
-            <p class="slot-hint">
-              Type in the <span class="hint-chip">highlighted</span> slots, then copy.
-            </p>
-          ) : null}
-          <div class="prompt-box">
-            <PromptRun text={prompt.text ?? ''} slots={prompt.slots} />
-            <button type="button" class="copy-btn" data-copy>
-              Copy
-            </button>
-          </div>
-        </>
-      )}
+      <PromptWorkspace prompt={prompt} />
     </section>
 
     <section class="block" id="example">

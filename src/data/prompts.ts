@@ -9,6 +9,8 @@ export type PromptSlot = {
   key: string;
   placeholder: string;
   sample: string;
+  label?: string;
+  hint?: string;
 };
 
 export type Prompt = {
@@ -28,6 +30,8 @@ const customerName: PromptSlot = {
   key: 'Customer Name',
   placeholder: '[Customer Name]',
   sample: 'Acme Group',
+  label: 'Customer name',
+  hint: 'The account, as they say it internally.',
 };
 
 export const groups: { id: PromptGroup; label: string }[] = [
@@ -73,6 +77,8 @@ export const prompts: Prompt[] = [
         key: 'notes',
         placeholder: '[Insert your unedited notes or goal here]',
         sample: 'Need a QBR agenda that is not a generic SLA deck',
+        label: 'Your notes',
+        hint: 'Unedited notes or the goal. Leave them messy.',
       },
     ],
     text: `I want to create an effective prompt for a Key Account Management task. Below is my rough draft.

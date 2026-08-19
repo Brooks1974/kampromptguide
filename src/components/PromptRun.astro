@@ -23,10 +23,10 @@ const parts = splitPromptText(text, slots);
           data-slot={part.slot.key}
           data-placeholder={part.slot.placeholder}
           data-sample={part.slot.sample}
-          value={part.slot.sample}
-          placeholder={part.slot.sample}
-          aria-label={part.slot.key}
-          size={Math.max(part.slot.sample.length, part.slot.key.length, 8)}
+          value=""
+          placeholder={part.slot.placeholder}
+          aria-label={part.slot.label ?? part.slot.key}
+          size={Math.max(part.slot.placeholder.length, part.slot.key.length, 8)}
         />
       ),
     )

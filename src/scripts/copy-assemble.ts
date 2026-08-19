@@ -1,3 +1,8 @@
+function slotValue(input: HTMLInputElement): string {
+  const filled = input.value.trim();
+  return filled || input.dataset.placeholder || `[${input.dataset.slot ?? input.dataset.fillField ?? ''}]`;
+}
+
 export function assemble(box: HTMLElement): string {
   let text = '';
   const walk = (node: Node) => {
@@ -6,7 +11,7 @@ export function assemble(box: HTMLElement): string {
       return;
     }
     if (node instanceof HTMLInputElement) {
-      text += node.value || node.dataset.sample || node.dataset.placeholder || '';
+      text += slotValue(node);
       return;
     }
     node.childNodes.forEach(walk);
@@ -39,7 +44,26 @@ export async function copyText(text: string, button: HTMLButtonElement): Promise
   }, 1600);
 }
 
+function syncFill(scope: ParentNode, key: string, value: string, source: HTMLInputElement): void {
+  const fields = scope.querySelectorAll<HTMLInputElement>(`[data-fill-field="${key}"], [data-slot="${key}"]`);
+  for (const field of fields) {
+    if (field === source) continue;
+    field.value = value;
+    if (field.classList.contains('slot')) {
+      const fallback = field.dataset.placeholder ?? key;
+      field.size = Math.max(value.length || fallback.length, 8);
+    }
+  }
+}
+
 export function bindCopy(root: ParentNode = document): void {
+  root.addEventListener('submit', (event) => {
+    const form = event.target;
+    if (form instanceof HTMLFormElement && form.matches('[data-fill-form]')) {
+      event.preventDefault();
+    }
+  });
+
   root.addEventListener('click', async (event) => {
     const target = event.target;
     if (!(target instanceof Element)) return;
@@ -52,7 +76,17 @@ export function bindCopy(root: ParentNode = document): void {
 
   root.addEventListener('input', (event) => {
     const input = event.target;
-    if (!(input instanceof HTMLInputElement) || !input.classList.contains('slot')) return;
-    input.size = Math.max(input.value.length, 8);
+    if (!(input instanceof HTMLInputElement)) return;
+
+    const key = input.dataset.fillField || input.dataset.slot;
+    if (key) {
+      const scope = input.closest('[data-fill]') ?? root;
+      syncFill(scope, key, input.value, input);
+    }
+
+    if (input.classList.contains('slot')) {
+      const fallback = input.dataset.placeholder ?? input.dataset.slot ?? '';
+      input.size = Math.max(input.value.length || fallback.length, 8);
+    }
   });
 }
