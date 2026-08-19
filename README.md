@@ -2,11 +2,11 @@
 
 A public [Astro](https://astro.build) site for [kampromptguide.com](https://kampromptguide.com).
 
-It is the classroom and giveaway companion to *The Key Account Manager’s Guide to Prompting* (Value Matters workbook, v3.0, July 2026, Richard Brooks). Twelve copyable prompts. No login, no waitlist, no CMS.
+It is the classroom and giveaway companion to *The Key Account Manager’s Guide to Prompting* (Value Matters workbook, v3.0, July 2026, Richard Brooks). Forty copyable prompts. No login, no waitlist, no CMS.
 
 The brand on the page is **Value Matters**. The domain can stay kampromptguide.com.
 
-`/` is the catalog: search, Start here, filter pills, closed cards, and a table of all 12. Each prompt also has a page at `/prompts/[slug]`. `/prompts` (no slug) redirects home.
+`/` is the catalog: search, Start here, filter pills, closed cards, and a table of all 40. Each prompt also has a page at `/prompts/[slug]`. `/prompts` (no slug) redirects home.
 
 ## Run locally
 
