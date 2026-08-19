@@ -24,15 +24,18 @@ export type PromptPage = {
 export const promptPages: Record<string, PromptPage> = {
   'qbr-reframe': {
     whenBullets: [
-      'The first QBR draft is heading for generic slides.',
-      'You know the operational pressure but it is not in the brief.',
+      'The first QBR draft is heading for a generic pack.',
+      'You know the pressure but it is not in the brief.',
       'You want the model to set the agenda, not decorate one.',
     ],
     needs: [
-      { label: 'Nothing to fill', hint: 'The logistics pressure is already in the prompt. Paste it as written.' },
+      { label: 'Customer name', hint: 'The account on the review.' },
+      { label: 'Sector', hint: 'Their industry, in their words.' },
+      { label: 'Pressures', hint: 'What is squeezing them this quarter.' },
+      { label: 'Metric', hint: 'The number that must not slip.' },
     ],
     example:
-      'Three pressures this quarter: fuel on the trunking network, overtime in the hubs, and missed collection windows already leaking margin. The review should open on those, and on how a technology partner attaches to each — not on another SLA slide.',
+      'Three pressures this quarter, named in their language. The review opens on those, and on how we attach to each, not on a generic pack.',
     related: 'post-qbr-follow-up',
   },
   'meta-prompt': {
@@ -45,7 +48,7 @@ export const promptPages: Record<string, PromptPage> = {
       { label: 'Your unedited notes', hint: 'Leave them messy. The model’s job is to write the brief, not the deck.' },
     ],
     example:
-      'A structured brief: role (KAM preparing a QBR), constraints (no unapproved commercial offers), context separated from instructions, output as a one-page agenda with three decisions. Still a brief — not the deliverable.',
+      'A structured brief: role (KAM preparing a QBR), constraints (no unapproved commercial offers), context separated from instructions, output as a one-page agenda with three decisions. Still a brief, not the deliverable.',
     related: 'qbr-reframe',
   },
   'stakeholder-alignment': {
@@ -66,13 +69,17 @@ export const promptPages: Record<string, PromptPage> = {
     whenBullets: [
       'The review is over. The email is not sent.',
       'Facts, constraints, and structure must stay in their own lanes.',
-      'You need a thank-you, one confirmed metric, and one date — nothing else.',
+      'You need a thank-you, one proof, and one next step. Nothing else.',
     ],
     needs: [
       { label: 'Customer name', hint: 'The account on the email.' },
+      { label: 'Recipient', hint: 'Who the email is for.' },
+      { label: 'What went well', hint: 'One proof from the review.' },
+      { label: 'The concern', hint: 'What they pushed back on.' },
+      { label: 'Next step', hint: 'One clear action.' },
     ],
     example:
-      'Thanks for the Q2 review. We confirm the uptime already in the brief. One action: a date for the European onboarding audit. No credits. Under 200 words.',
+      'Thanks for the review. One proof from what went well. One action on the concern. Under 200 words. No money promised.',
     related: 'qbr-reframe',
   },
   'sequential-chain': {
@@ -101,7 +108,7 @@ export const promptPages: Record<string, PromptPage> = {
       { label: 'Meeting history and terms', hint: 'The prompt assumes you attach them. Do not ask the model to invent the file.' },
     ],
     example:
-      'Five ways they walk: a cheaper alternative, an internal build, a sponsor move, unused scope, and a service scar. Beside each, the mitigation you can start this month — not a speech about partnership.',
+      'Five ways they walk: a cheaper alternative, an internal build, a sponsor move, unused scope, and a service scar. Beside each, the mitigation you can start this month, not a speech about partnership.',
     related: 'value-realisation-audit',
   },
   'value-realisation-audit': {
@@ -120,15 +127,17 @@ export const promptPages: Record<string, PromptPage> = {
   },
   'de-escalation': {
     whenBullets: [
-      'There has been a service failure and an executive is on the line.',
+      'Something has gone wrong and an executive is on the line.',
       'You need acknowledgement and a next step.',
-      'You must not admit liability or invent a credit.',
+      'You must not admit liability or invent a concession.',
     ],
     needs: [
-      { label: 'Customer name', hint: 'The account whose CTO you are writing to.' },
+      { label: 'Customer name', hint: 'The account you are writing to.' },
+      { label: 'Executive', hint: 'The title of the person on the line.' },
+      { label: 'Incident', hint: 'What went wrong, in plain words.' },
     ],
     example:
-      'We acknowledge the disruption. Here is what is in motion tonight. Here is a time for a formal review. We do not admit legal liability and we do not promise money nobody has approved.',
+      'We acknowledge what happened. Here is what is in motion tonight. Here is a time for a formal review. We do not admit legal liability and we do not promise money nobody has approved.',
     related: 'scope-creep',
   },
   'scope-creep': {
@@ -160,29 +169,31 @@ export const promptPages: Record<string, PromptPage> = {
   },
   'vet-group-margins': {
     whenBullets: [
-      'Animal health. A clinic-group review, not a software QBR.',
+      'They sit on the buying side.',
       'Price cannot be the opening move.',
-      'You need the three commercial pressures already named in the prompt.',
+      'You need three commercial pressures that are not price.',
     ],
     needs: [
-      { label: 'Nothing to fill', hint: 'Staffing, buying-group terms, and own-brand mix are already in the brief.' },
+      { label: 'Customer name', hint: 'The account on the review.' },
+      { label: 'Metric', hint: 'The number they are trying to protect.' },
     ],
     example:
-      'Clinic margin is getting squeezed three ways: who you can hire, what the buying group will stand, and how much own-brand sits on the shelf. A supplier protects each without leading on price — locum cover, terms that do not punish the small sites, and mix that does not hollow the basket.',
+      'Three ways their margin is getting squeezed, none of them a price conversation. A supplier protects each one without leading on the number.',
     related: 'qbr-reframe',
   },
   'plant-director-proof': {
     whenBullets: [
-      'A multi-site manufacturer. Procurement is shopping the category.',
-      'The proof belongs with the plant director, not purchasing.',
+      'Procurement is shopping the category.',
+      'The proof belongs with the person who feels the work, not purchasing.',
       'You have notes from the last two reviews.',
     ],
     needs: [
-      { label: 'Customer name', hint: 'The manufacturer on the reviews.' },
+      { label: 'Customer name', hint: 'The account on the reviews.' },
+      { label: 'Operational buyer', hint: 'The person who feels the work, not the person who buys it.' },
       { label: 'Notes from the last two reviews', hint: 'Attach them. Look for signs they are shopping, then name three proofs.' },
     ],
     example:
-      'Signs purchasing is testing the category: a late “just checking the market,” a request for a line-by-line compare, a new contact copied from a rival. Three proofs for the plant director: uptime on their line, changeover time, and the last quality escape we stopped — not a price matrix.',
+      'Signs purchasing is testing the category: a late check of the market, a line-by-line compare, a new contact copied from a rival. Three proofs for the operations director, in their language, not a price matrix.',
     related: 'c-suite-pitch',
   },
 };

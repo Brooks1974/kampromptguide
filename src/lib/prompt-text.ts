@@ -50,18 +50,13 @@ export function searchBlob(prompt: Prompt): string {
     prompt.group,
     prompt.teaches,
     promptSource(prompt),
-    prompt.slug === 'vet-group-margins' ? 'animal health' : '',
-    prompt.slug === 'plant-director-proof' ? 'manufacturing' : '',
   ]
     .join(' ')
     .toLowerCase();
 }
 
 export function pillsOf(prompt: Prompt): string[] {
-  const pills = [prompt.group];
-  if (prompt.slug === 'vet-group-margins') pills.push('animal-health');
-  if (prompt.slug === 'plant-director-proof') pills.push('manufacturing');
-  return pills;
+  return [prompt.group];
 }
 
 export function chapterOf(prompt: Prompt): string {

@@ -48,8 +48,6 @@ export const filterPills: { id: string; label: string }[] = [
   { id: 'meetings', label: 'Meetings' },
   { id: 'renewal', label: 'Renewal' },
   { id: 'recovery', label: 'Recovery' },
-  { id: 'animal-health', label: 'Animal health' },
-  { id: 'manufacturing', label: 'Manufacturing' },
 ];
 
 export const prompts: Prompt[] = [
@@ -57,12 +55,35 @@ export const prompts: Prompt[] = [
     slug: 'qbr-reframe',
     title: 'QBR reframe',
     when: 'Before a quarterly review when the first draft would otherwise be generic.',
-    tag: 'Brief / logistics (supplier)',
+    tag: 'Brief',
     group: 'brief',
     startN: 2,
-    teaches:
-      'Names the industry pressure before asking for the agenda, so the model cannot default to generic SLA slides.',
-    text: 'You are a Key Account Manager preparing for a quarterly review with a mid-sized European logistics provider facing rising fuel overheads and labour shortages. Identify the three operational bottlenecks most likely to threaten their gross margin this quarter and outline how a technology partner can address each one.',
+    teaches: 'Names the pressure before asking for the agenda, so the model cannot default to a generic pack.',
+    slots: [
+      customerName,
+      {
+        key: 'sector',
+        placeholder: '[sector]',
+        sample: 'their industry',
+        label: 'Sector',
+        hint: 'Their industry, in their words.',
+      },
+      {
+        key: 'pressures',
+        placeholder: '[pressures]',
+        sample: 'the squeeze this quarter',
+        label: 'Pressures',
+        hint: 'What is squeezing them this quarter.',
+      },
+      {
+        key: 'metric',
+        placeholder: '[metric]',
+        sample: 'gross margin',
+        label: 'Metric',
+        hint: 'The number that must not slip.',
+      },
+    ],
+    text: 'You are a Key Account Manager preparing for a quarterly review with [Customer Name], a [sector] organisation facing [pressures]. Identify the three operational bottlenecks most likely to threaten their [metric] this quarter and outline how we can address each one without leading on price.',
   },
   {
     slug: 'meta-prompt',
@@ -76,7 +97,7 @@ export const prompts: Prompt[] = [
       {
         key: 'notes',
         placeholder: '[Insert your unedited notes or goal here]',
-        sample: 'Need a QBR agenda that is not a generic SLA deck',
+        sample: 'Need a QBR agenda that is not a generic pack',
         label: 'Your notes',
         hint: 'Unedited notes or the goal. Leave them messy.',
       },
@@ -110,17 +131,48 @@ My rough draft: [Insert your unedited notes or goal here]`,
     group: 'meetings',
     teaches:
       'XML tags keep the facts, the constraints, and the email structure from bleeding into each other.',
-    slots: [customerName],
+    slots: [
+      customerName,
+      {
+        key: 'recipient',
+        placeholder: '[recipient]',
+        sample: 'VP of Procurement',
+        label: 'Recipient',
+        hint: 'Who the email is for.',
+      },
+      {
+        key: 'what went well',
+        placeholder: '[what went well]',
+        sample: 'We hit the agreed outcomes for the quarter.',
+        label: 'What went well',
+        hint: 'One proof from the review.',
+      },
+      {
+        key: 'the concern',
+        placeholder: '[the concern]',
+        sample: 'They raised a delay in onboarding.',
+        label: 'The concern',
+        hint: 'What they pushed back on.',
+      },
+      {
+        key: 'next step',
+        placeholder: '[next step]',
+        sample: 'Set a date for an onboarding audit',
+        label: 'Next step',
+        hint: 'One clear action.',
+      },
+    ],
     text: `<Task>
-Draft an executive summary email to [Customer Name]'s VP of Procurement following our Quarterly Business Review.
+Draft an executive summary email to [Customer Name]'s [recipient] following our Quarterly Business Review.
 </Task>
 
 <Context>
-We successfully met all Tier-1 uptime SLAs for Q2. However, the customer raised concerns about onboarding delays in their European offices.
+[what went well]
+[the concern]
 </Context>
 
 <Constraints>
-Keep the length under 200 words. Do not make financial commitments regarding service credits.
+Keep the length under 200 words. Do not make financial commitments.
 </Constraints>
 
 <Tone>
@@ -128,9 +180,9 @@ Direct, professional, and solution-focused.
 </Tone>
 
 <RequiredOutput>
-1. A brief thank-you acknowledging their Q2 partnership.
-2. A single bullet confirming our 99.9% uptime metric.
-3. A clear action item setting an audit date for European onboarding.
+1. A brief thank-you.
+2. One proof point from the review.
+3. A clear action item: [next step]
 </RequiredOutput>`,
   },
   {
@@ -179,12 +231,28 @@ Direct, professional, and solution-focused.
   {
     slug: 'de-escalation',
     title: 'De-escalation',
-    when: 'Service failure, executive on the line.',
+    when: 'Something has gone wrong and an executive is on the line.',
     tag: 'Recovery',
     group: 'recovery',
-    teaches: 'Acknowledge and next step. No liability, no unapproved credits.',
-    slots: [customerName],
-    text: "Draft a response to [Customer Name]'s Chief Technology Officer acknowledging the recent service disruption. Reiterate our commitment to service quality, outline immediate corrective actions, and suggest a formal review meeting without admitting legal liability or promising unapproved financial credits.",
+    teaches: 'Acknowledge and next step. No liability, no unapproved commercial concessions.',
+    slots: [
+      customerName,
+      {
+        key: 'executive',
+        placeholder: '[executive]',
+        sample: 'Chief Operating Officer',
+        label: 'Executive',
+        hint: 'The title of the person you are writing to.',
+      },
+      {
+        key: 'incident',
+        placeholder: '[incident]',
+        sample: 'disruption',
+        label: 'Incident',
+        hint: 'What went wrong, in plain words.',
+      },
+    ],
+    text: "Draft a response to [Customer Name]'s [executive] acknowledging the recent [incident]. Reiterate our commitment, outline immediate corrective actions, and suggest a formal review meeting without admitting legal liability or promising unapproved commercial concessions.",
   },
   {
     slug: 'scope-creep',
@@ -208,22 +276,41 @@ Direct, professional, and solution-focused.
   },
   {
     slug: 'vet-group-margins',
-    title: 'Vet-group margins',
-    when: 'Animal health / clinic-group account review.',
-    tag: 'Research / animal health',
+    title: 'Buyer-side margins',
+    when: 'A buyer-side account review, before anyone leads on price.',
+    tag: 'Research',
     group: 'research',
     startN: 5,
-    teaches: 'Three commercial pressures that are not price. Buyer-side animal health.',
-    text: 'You are a Key Account Manager in animal health preparing a quarterly review with a national veterinary group. Identify the three commercial pressures most likely to squeeze clinic margins this year — staffing, buying-group terms, and own-brand mix — and outline how a supplier can help the group protect each one without leading on price.',
+    teaches: 'Three commercial pressures that are not price. Buyer-side.',
+    slots: [
+      customerName,
+      {
+        key: 'metric',
+        placeholder: '[metric]',
+        sample: 'operating margin',
+        label: 'Metric',
+        hint: 'The number they are trying to protect.',
+      },
+    ],
+    text: 'You are a Key Account Manager preparing a quarterly review with [Customer Name]. They sit on the buying side. Identify the three commercial pressures most likely to squeeze their [metric] this year and outline how a supplier can help them protect each one without leading on price.',
   },
   {
     slug: 'plant-director-proof',
-    title: 'Plant-director proof',
-    when: 'Multi-site manufacturer, procurement is shopping the category.',
-    tag: 'Research / manufacturing',
+    title: 'Past procurement',
+    when: 'Procurement is shopping the category.',
+    tag: 'Research',
     group: 'research',
-    teaches: 'Watch for category shopping. Take the proof to the plant director, not purchasing.',
-    slots: [customerName],
-    text: 'Review these notes from the last two business reviews with [Customer Name], a multi-site manufacturer. Highlight any signs the procurement lead is shopping the category, and list three value proofs we should take to the plant director rather than to purchasing.',
+    teaches: 'Watch for category shopping. Take the proof to the person who feels the work, not purchasing.',
+    slots: [
+      customerName,
+      {
+        key: 'operational buyer',
+        placeholder: '[operational buyer]',
+        sample: 'operations director',
+        label: 'Operational buyer',
+        hint: 'The person who feels the work, not the person who buys it.',
+      },
+    ],
+    text: 'Review these notes from the last two business reviews with [Customer Name]. Highlight any signs the procurement lead is shopping the category, and list three value proofs we should take to [operational buyer] rather than to purchasing.',
   },
 ];
