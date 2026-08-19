@@ -1,0 +1,35 @@
+---
+import type { PromptSlot } from '../data/prompts';
+import { splitPromptText } from '../lib/prompt-text';
+
+interface Props {
+  text: string;
+  slots?: PromptSlot[];
+}
+
+const { text, slots = [] } = Astro.props;
+const parts = splitPromptText(text, slots);
+---
+
+<div class="prompt-run" data-assemble>
+  {
+    parts.map((part) =>
+      part.type === 'text' ? (
+        part.value
+      ) : (
+        <input
+          class="slot is-empty"
+          type="text"
+          data-slot={part.slot.key}
+          data-placeholder={part.slot.placeholder}
+          data-sample={part.slot.sample}
+          value={part.slot.placeholder}
+          placeholder={part.slot.placeholder}
+          aria-label={part.slot.label ?? part.slot.key}
+          size={Math.max(part.slot.placeholder.length, 8)}
+          style={`min-width: ${Math.max(part.slot.placeholder.length, 8)}ch`}
+        />
+      ),
+    )
+  }
+</div>

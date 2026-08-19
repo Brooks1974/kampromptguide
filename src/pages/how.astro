@@ -1,0 +1,78 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import WhoWeAre from '../components/WhoWeAre.astro';
+import { pageUrl } from '../lib/site';
+
+const steps = [
+  'Role: who the assistant is (usually a KAM; say if they sit buy-side or supply-side).',
+  'Context: the account, the moment, what you attach (notes, transcript, report).',
+  'Research: what to look at and what not to invent.',
+  'Competitors: who else is in the conversation.',
+  'Constraints: what it must not do.',
+  'The job: one job per prompt.',
+  'Audience: who reads the output.',
+  'Format: email, five reasons, three proofs, under 200 words.',
+];
+
+const jsonLd = [
+  {
+    '@type': 'HowTo',
+    name: 'How we brief',
+    description:
+      'Every prompt is built from role, context, research, competitors, constraints, the job, audience, and format.',
+    url: pageUrl('/how'),
+    step: steps.map((text, index) => ({
+      '@type': 'HowToStep',
+      position: index + 1,
+      text,
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title="How we brief | KAM prompt guide"
+  description="Every prompt is built from role, context, research, competitors, constraints, the job, audience, and format."
+  jsonLd={jsonLd}
+>
+  <article class="workbook wrap how">
+    <p class="crumb">
+      <a href="/">Prompt guide</a>
+      <span aria-hidden="true"> / </span>
+      How we brief
+    </p>
+    <h1>How we brief</h1>
+    <p class="lead-line">Every prompt is built from these:</p>
+    <ol class="how-list">
+      <li>
+        <strong>Role</strong> - who the assistant is (usually a KAM; say if they sit buy-side or
+        supply-side).
+      </li>
+      <li>
+        <strong>Context</strong> - the account, the moment, what you attach (notes, transcript,
+        report).
+      </li>
+      <li>
+        <strong>Research</strong> - what to look at and what not to invent. Filings, usage, the board
+        pack. If you have not attached it, say so.
+      </li>
+      <li>
+        <strong>Competitors</strong> - who else is in the conversation. Named rivals, a category
+        alternative, or "procurement is shopping". If you do not know, say you do not know.
+      </li>
+      <li>
+        <strong>Constraints</strong> - what it must not do (no unapproved money, no legal admission,
+        no generic pack).
+      </li>
+      <li><strong>The job</strong> - one job per prompt.</li>
+      <li><strong>Audience</strong> - who reads the output (COO is not procurement).</li>
+      <li><strong>Format</strong> - email, five reasons, three proofs, under 200 words.</li>
+    </ol>
+    <p>
+      If the job is too big, chain it. That is the
+      {' '}<a href="/prompts/sequential-chain">Sequential chain</a>. The
+      {' '}<a href="/prompts/meta-prompt">Meta-prompt</a> writes this brief when notes are messy.
+    </p>
+    <WhoWeAre />
+  </article>
+</BaseLayout>

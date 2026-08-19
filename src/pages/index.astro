@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Catalog from '../components/Catalog.astro';
+import { prompts } from '../data/prompts';
+import { GUIDE_NAME, SITE_ORIGIN, pageUrl } from '../lib/site';
+
+const jsonLd = [
+  {
+    '@type': 'WebSite',
+    name: GUIDE_NAME,
+    url: `${SITE_ORIGIN}/`,
+  },
+  {
+    '@type': 'ItemList',
+    name: GUIDE_NAME,
+    numberOfItems: prompts.length,
+    itemListElement: prompts.map((prompt, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: prompt.title,
+      url: pageUrl(`/prompts/${prompt.slug}`),
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title="KAM prompt guide | Value Matters"
+  description="Forty Key Account Management prompts. Fill the slots, copy, paste into any model. A starting point from Value Matters."
+  jsonLd={jsonLd}
+>
+  <div class="page wrap">
+    <Catalog />
+  </div>
+</BaseLayout>

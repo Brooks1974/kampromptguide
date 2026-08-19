@@ -1,0 +1,44 @@
+---
+import type { Prompt } from '../data/prompts';
+import { pillsOf, previewText, searchBlob } from '../lib/prompt-text';
+import PromptWorkspace from './PromptWorkspace.astro';
+
+interface Props {
+  prompt: Prompt;
+}
+
+const { prompt } = Astro.props;
+const preview = previewText(prompt);
+const search = searchBlob(prompt);
+const pills = pillsOf(prompt).join(' ');
+---
+
+<details
+  class="card"
+  id={prompt.slug}
+  data-slug={prompt.slug}
+  data-group={prompt.group}
+  data-pills={pills}
+  data-search={search}
+  data-start={prompt.startN}
+  style={prompt.startN ? `--ord: ${prompt.startN}` : undefined}
+>
+  <summary>
+    <span class="card-top">
+      <span class="card-title">{prompt.title}</span>
+      {prompt.startN && <span class="start-chip">Start here · {prompt.startN}</span>}
+    </span>
+    <span class="when">{prompt.when}</span>
+    <span class="preview">{preview}</span>
+  </summary>
+
+  <div class="card-body">
+    <PromptWorkspace prompt={prompt} />
+
+    <p class="why-label">Why this works</p>
+    <p class="why">{prompt.teaches}</p>
+    <p class="card-page">
+      <a href={`/prompts/${prompt.slug}`}>Open the page</a>
+    </p>
+  </div>
+</details>

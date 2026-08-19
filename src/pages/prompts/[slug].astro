@@ -1,0 +1,90 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PromptWorkspace from '../../components/PromptWorkspace.astro';
+import { prompts } from '../../data/prompts';
+import { pageFor, relatedPrompt } from '../../data/prompt-pages';
+import { chapterOf, verbOf } from '../../lib/prompt-text';
+import { SITE_NAME, pageUrl } from '../../lib/site';
+
+export function getStaticPaths() {
+  return prompts.map((prompt) => ({
+    params: { slug: prompt.slug },
+    props: { prompt },
+  }));
+}
+
+const { prompt } = Astro.props;
+const page = pageFor(prompt.slug);
+if (!page) {
+  throw new Error(`Missing page copy for ${prompt.slug}`);
+}
+
+const related = relatedPrompt(prompt.slug);
+const chapter = chapterOf(prompt);
+const verb = verbOf(prompt);
+const jsonLd = [
+  {
+    '@type': 'TechArticle',
+    name: prompt.title,
+    headline: prompt.title,
+    description: prompt.when,
+    url: pageUrl(`/prompts/${prompt.slug}`),
+    author: { '@type': 'Organization', name: SITE_NAME },
+  },
+];
+---
+
+<BaseLayout
+  title={`${prompt.title} | KAM prompt guide`}
+  description={prompt.when}
+  jsonLd={jsonLd}
+>
+  <article class="workbook wrap">
+    <p class="crumb">
+      <a href="/">Prompt guide</a>
+      <span aria-hidden="true"> / </span>
+      {prompt.title}
+    </p>
+    <p class="kicker">{chapter} · {verb}</p>
+    <h1>{prompt.title}</h1>
+
+    <section class="block" id="when">
+      <h2>When to use</h2>
+      <p class="lead-line">{prompt.when}</p>
+      <ul>
+        {page.whenBullets.map((bullet) => (
+          <li>{bullet}</li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="block" id="need">
+      <h2>You will need</h2>
+      <dl class="needs">
+        {page.needs.map((need) => (
+          <>
+            <dt>{need.label}</dt>
+            <dd>{need.hint}</dd>
+          </>
+        ))}
+      </dl>
+    </section>
+
+    <section class="block" id="prompt">
+      <h2>The prompt</h2>
+      <PromptWorkspace prompt={prompt} />
+    </section>
+
+    <section class="block" id="example">
+      <h2>What good looks like</h2>
+      <p class="example-label">Example: not a client result</p>
+      <p class="example">{page.example}</p>
+    </section>
+
+    {related && (
+      <p class="related">
+        Related: <a href={`/prompts/${related.slug}`}>{related.title}</a>
+      </p>
+    )}
+  </article>
+</BaseLayout>

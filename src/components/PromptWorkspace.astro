@@ -1,0 +1,38 @@
+---
+import type { Prompt } from '../data/prompts';
+import FillForm from './FillForm.astro';
+import PromptRun from './PromptRun.astro';
+
+interface Props {
+  prompt: Prompt;
+}
+
+const { prompt } = Astro.props;
+const slots = prompt.slots ?? [];
+---
+
+<div class="workspace" data-fill>
+  {slots.length > 0 ? <FillForm slots={slots} /> : null}
+
+  {prompt.steps ? (
+    <>
+      <p class="slot-hint">Three turns. Copy each one separately.</p>
+      {prompt.steps.map((step) => (
+        <div class="prompt-box">
+          <p class="step-label">{step.label}</p>
+          <PromptRun text={step.text} slots={slots} />
+          <button type="button" class="copy-btn" data-copy>
+            Copy
+          </button>
+        </div>
+      ))}
+    </>
+  ) : (
+    <div class="prompt-box">
+      <PromptRun text={prompt.text ?? ''} slots={slots} />
+      <button type="button" class="copy-btn" data-copy>
+        Copy
+      </button>
+    </div>
+  )}
+</div>

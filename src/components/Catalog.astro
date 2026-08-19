@@ -1,0 +1,224 @@
+---
+import { filterPills, groups, prompts } from '../data/prompts';
+import { chapterOf, pillsOf, searchBlob } from '../lib/prompt-text';
+import PromptCard from './PromptCard.astro';
+import WhoWeAre from './WhoWeAre.astro';
+
+const startPrompts = [...prompts]
+  .filter((prompt) => prompt.startN)
+  .sort((a, b) => (a.startN ?? 0) - (b.startN ?? 0));
+---
+
+<div class="catalog" data-catalog data-view="start">
+  <h1>The Key Account Manager’s Guide to Prompting</h1>
+  <div class="intro">
+    <p>
+      These prompts were written for Key Account Managers, from work with hundreds of KAMs. They are
+      a starting point. Take one, put your account in the slots, and make it yours.
+    </p>
+    <p>
+      Context does the heavy lifting. Attach the notes, the transcript, the pack. Better still, keep
+      an LLM wiki or a second brain the model can draw on.
+    </p>
+    <p>We are always happy to talk about this.</p>
+  </div>
+  <p class="how-jump"><a href="/how">How we brief →</a></p>
+  <p class="talk-jump"><a href="mailto:richard@value-matters.net">Talk to us →</a></p>
+  <WhoWeAre />
+
+  <label class="search">
+    <span class="visually-hidden">Search prompts</span>
+    <input type="search" data-search placeholder="QBR, renewal, competitor…" autocomplete="off" />
+  </label>
+
+  <div class="toolbar">
+    <div class="pills" data-pills>
+      <button type="button" class="pill pill-start on" data-filter="start" aria-pressed="true">
+        Start here
+      </button>
+      <span class="sep" aria-hidden="true"></span>
+      {filterPills.map((pill) => (
+        <button type="button" class="pill" data-filter={pill.id} aria-pressed="false">
+          {pill.label}
+        </button>
+      ))}
+      <button type="button" class="clear" data-clear hidden>Clear</button>
+    </div>
+    <p class="count" data-count>{`${prompts.length} prompts`}</p>
+  </div>
+
+  <div class="start-set" data-start-set>
+    <p class="start-heading">Five prompts to try first</p>
+    <div class="results">
+      {startPrompts.map((prompt) => (
+        <PromptCard prompt={prompt} />
+      ))}
+    </div>
+    <a class="show-all" href="#all-prompts" data-show-all>Show all {prompts.length} prompts →</a>
+  </div>
+
+  <div class="index" id="all-prompts">
+    <p class="start-heading">All {prompts.length}</p>
+    <div class="index-wrap">
+      <table class="index-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>When</th>
+            <th>Chapter</th>
+          </tr>
+        </thead>
+        <tbody>
+          {groups.map((group) =>
+            prompts
+              .filter((prompt) => prompt.group === group.id)
+              .map((prompt) => (
+                <tr
+                  data-index-slug={prompt.slug}
+                  data-pills={pillsOf(prompt).join(' ')}
+                  data-search={searchBlob(prompt)}
+                  data-start={prompt.startN}
+                  id={prompt.startN ? `row-${prompt.slug}` : prompt.slug}
+                >
+                  <td>
+                    <a href={`/prompts/${prompt.slug}`}>{prompt.title}</a>
+                  </td>
+                  <td>{prompt.when}</td>
+                  <td>{chapterOf(prompt)}</td>
+                </tr>
+              )),
+          )}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <p class="empty" data-empty hidden>No prompts match. <button type="button" class="clear" data-clear>Clear</button></p>
+</div>
+
+<script>
+  const catalog = document.querySelector<HTMLElement>('[data-catalog]');
+  if (catalog) {
+    const searchInput = catalog.querySelector<HTMLInputElement>('[data-search]');
+    const countEl = catalog.querySelector<HTMLElement>('[data-count]');
+    const startSet = catalog.querySelector<HTMLElement>('[data-start-set]');
+    const empty = catalog.querySelector<HTMLElement>('[data-empty]');
+    const cards = [...catalog.querySelectorAll<HTMLDetailsElement>('[data-slug]')];
+    const rows = [...catalog.querySelectorAll<HTMLTableRowElement>('[data-index-slug]')];
+    const filterButtons = [...catalog.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+    const clearButtons = [...catalog.querySelectorAll<HTMLButtonElement>('[data-clear]')];
+    const showAll = catalog.querySelector<HTMLAnchorElement>('[data-show-all]');
+
+    let view = 'start';
+    let query = '';
+
+    const setHash = (slug: string | null) => {
+      const url = new URL(window.location.href);
+      url.hash = slug ? slug : '';
+      history.replaceState(null, '', url);
+    };
+
+    const apply = () => {
+      const q = query.trim().toLowerCase();
+      let visible = 0;
+
+      for (const row of rows) {
+        const matchQuery = !q || (row.dataset.search ?? '').includes(q);
+        const matchView = q || view === 'start' || view === 'all'
+          ? true
+          : (row.dataset.pills ?? '').split(' ').includes(view);
+        const on = matchQuery && matchView;
+        row.hidden = !on;
+        if (on) visible += 1;
+      }
+
+      if (startSet) startSet.hidden = Boolean(q) || (view !== 'start' && view !== 'all');
+      catalog.dataset.view = q ? 'search' : view;
+      if (countEl) countEl.textContent = visible === 1 ? '1 prompt' : `${visible} prompts`;
+      if (empty) empty.hidden = visible !== 0;
+
+      for (const button of filterButtons) {
+        const id = button.dataset.filter;
+        const on = !q && ((id === 'start' && view === 'start') || id === view);
+        button.classList.toggle('on', on);
+        button.setAttribute('aria-pressed', on ? 'true' : 'false');
+      }
+
+      const filtered = Boolean(q) || (view !== 'start' && view !== 'all');
+      for (const button of clearButtons) button.hidden = !filtered;
+    };
+
+    const openSlug = (slug: string) => {
+      const card = cards.find((item) => item.dataset.slug === slug);
+      if (card) {
+        view = 'start';
+        apply();
+        card.open = true;
+        card.scrollIntoView({ block: 'start', behavior: 'smooth' });
+        return;
+      }
+      const row = rows.find((item) => item.dataset.indexSlug === slug);
+      if (row) {
+        view = 'all';
+        apply();
+        row.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        row.classList.add('is-target');
+      }
+    };
+
+    searchInput?.addEventListener('input', () => {
+      query = searchInput.value;
+      apply();
+    });
+
+    for (const button of filterButtons) {
+      button.addEventListener('click', () => {
+        query = '';
+        if (searchInput) searchInput.value = '';
+        const id = button.dataset.filter ?? 'start';
+        if (id === 'start') {
+          view = 'start';
+        } else {
+          view = view === id ? 'start' : id;
+        }
+        apply();
+      });
+    }
+
+    const reset = () => {
+      query = '';
+      view = 'start';
+      if (searchInput) searchInput.value = '';
+      apply();
+    };
+
+    for (const button of clearButtons) button.addEventListener('click', reset);
+
+    showAll?.addEventListener('click', (event) => {
+      event.preventDefault();
+      document.getElementById('all-prompts')?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    });
+
+    catalog.addEventListener('toggle', (event) => {
+      const card = event.target;
+      if (!(card instanceof HTMLDetailsElement) || !card.dataset.slug) return;
+      if (card.open) {
+        for (const other of cards) {
+          if (other !== card) other.open = false;
+        }
+        setHash(card.dataset.slug);
+      } else if (window.location.hash.slice(1) === card.dataset.slug) {
+        setHash(null);
+      }
+    }, true);
+
+    apply();
+
+    const initial = window.location.hash.replace('#', '');
+    if (initial && initial !== 'library' && initial !== 'all-prompts') openSlug(initial);
+    window.addEventListener('hashchange', () => {
+      const slug = window.location.hash.replace('#', '');
+      if (slug && slug !== 'library' && slug !== 'all-prompts') openSlug(slug);
+    });
+  }
+</script>

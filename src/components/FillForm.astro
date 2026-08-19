@@ -1,0 +1,30 @@
+---
+import type { PromptSlot } from '../data/prompts';
+
+interface Props {
+  slots: PromptSlot[];
+}
+
+const { slots } = Astro.props;
+---
+
+<form class="fill-form" data-fill-form>
+  <p class="fill-title">Fill this in</p>
+  <p class="fill-job">Fill the slots. The prompt rebuilds. Then Copy.</p>
+  {
+    slots.map((slot) => (
+      <label class="fill-field">
+        <span class="fill-label">{slot.label ?? slot.key}</span>
+        {slot.hint ? <span class="fill-hint">{slot.hint}</span> : null}
+        <input
+          type="text"
+          data-fill-field={slot.key}
+          data-placeholder={slot.placeholder}
+          placeholder={slot.placeholder}
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </label>
+    ))
+  }
+</form>
