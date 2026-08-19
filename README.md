@@ -6,7 +6,7 @@ It is the classroom and giveaway companion to *The Key Account Manager’s Guide
 
 The brand on the page is **Value Matters**. The domain can stay kampromptguide.com.
 
-`/` is the library. `/prompts` redirects there so old links still work.
+`/` is the catalog: search, Start here, filter pills, closed cards that expand to fill slots and copy. `/prompts` redirects there so old links still work.
 
 ## Run locally
 

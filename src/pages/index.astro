@@ -1,44 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PromptCard from '../components/PromptCard.astro';
-import { groups, prompts } from '../data/prompts';
-
-const description =
-  'A Value Matters workbook. A weak brief produces weak output.';
+import Catalog from '../components/Catalog.astro';
 ---
 
 <BaseLayout
   title="The Key Account Manager’s Guide to Prompting | Value Matters"
-  description={description}
+  description="Twelve prompts from The Key Account Manager’s Guide to Prompting. Copy one, fill the slots, paste it into whatever model you use."
 >
-  <header class="intro wrap">
-    <h1>The Key Account Manager’s Guide to Prompting</h1>
-    <p class="lead">A Value Matters workbook. A weak brief produces weak output.</p>
-    <p class="book">
-      <em>Creating Customer Value Propositions with AI</em> (Davies, Brooks, Holt; Kogan Page, 2027)
-      is how you create the value.
-    </p>
-    <p class="pitfalls">
-      Vagueness, overloading, context starvation: get these wrong and the assistant still sounds fluent.
-    </p>
-    <p class="trust">
-      Check anything that will be said to a customer. Public chatbots do not get NDA material. The
-      polish of the output is not evidence of accuracy.
-    </p>
-  </header>
-
-  <div class="library wrap" id="library">
-    {groups.map((group) => (
-      <section class="library-group" id={group.id} aria-labelledby={`${group.id}-heading`}>
-        <h2 id={`${group.id}-heading`}>{group.label}</h2>
-        <div class="prompt-list">
-          {prompts
-            .filter((prompt) => prompt.group === group.id)
-            .map((prompt) => (
-              <PromptCard prompt={prompt} />
-            ))}
-        </div>
-      </section>
-    ))}
+  <div class="page wrap">
+    <Catalog />
   </div>
 </BaseLayout>

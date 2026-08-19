@@ -1,0 +1,250 @@
+---
+import { filterPills, groups, prompts } from '../data/prompts';
+import PromptCard from './PromptCard.astro';
+
+const startView = Astro.url.searchParams.get('view') !== 'all';
+const startCount = prompts.filter((prompt) => prompt.startN).length;
+---
+
+<div class="catalog" data-catalog data-view={startView ? 'start' : 'all'}>
+  <label class="search">
+    <span class="visually-hidden">Search prompts</span>
+    <input type="search" data-search placeholder="Search prompts…" autocomplete="off" />
+  </label>
+
+  <p class="intro">
+    Twelve prompts from <em>The Key Account Manager’s Guide to Prompting</em>. Copy one, fill the
+    slots, paste it into whatever model you use.
+  </p>
+
+  <div class="toolbar">
+    <div class="pills" data-pills>
+      <button type="button" class:list={['pill', 'pill-start', { on: startView }]} data-filter="start" aria-pressed={startView}>
+        Start here
+      </button>
+      <span class="sep" aria-hidden="true"></span>
+      {filterPills.map((pill) => (
+        <button type="button" class="pill" data-filter={pill.id} aria-pressed="false">
+          {pill.label}
+        </button>
+      ))}
+      <button type="button" class="clear" data-clear hidden>Clear</button>
+    </div>
+    <p class="count" data-count>{startView ? `${startCount} prompts` : `${prompts.length} prompts`}</p>
+  </div>
+
+  <p class="start-heading" data-start-heading hidden={!startView}>Five prompts to try first</p>
+
+  <div class="results">
+    {groups.map((group) => (
+      <section class="group" data-group-section={group.id}>
+        <h2 class="group-h" data-group-h={group.id} hidden={startView}>{group.label}</h2>
+        {prompts
+          .filter((prompt) => prompt.group === group.id)
+          .map((prompt) => (
+            <PromptCard prompt={prompt} />
+          ))}
+      </section>
+    ))}
+  </div>
+
+  <p class="empty" data-empty hidden>No prompts match. <button type="button" class="clear" data-clear>Clear</button></p>
+
+  <a class="show-all" href="/?view=all" data-show-all hidden={!startView}>Show all {prompts.length} prompts →</a>
+</div>
+
+<script>
+  const catalog = document.querySelector<HTMLElement>('[data-catalog]');
+  if (catalog) {
+    const searchInput = catalog.querySelector<HTMLInputElement>('[data-search]');
+    const countEl = catalog.querySelector<HTMLElement>('[data-count]');
+    const startHeading = catalog.querySelector<HTMLElement>('[data-start-heading]');
+    const showAll = catalog.querySelector<HTMLElement>('[data-show-all]');
+    const empty = catalog.querySelector<HTMLElement>('[data-empty]');
+    const cards = [...catalog.querySelectorAll<HTMLDetailsElement>('[data-slug]')];
+    const headings = [...catalog.querySelectorAll<HTMLElement>('[data-group-h]')];
+    const filterButtons = [...catalog.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+    const clearButtons = [...catalog.querySelectorAll<HTMLButtonElement>('[data-clear]')];
+
+    let view = catalog.dataset.view === 'all' ? 'all' : 'start';
+    let query = '';
+
+    const setHash = (slug: string | null) => {
+      const url = new URL(window.location.href);
+      url.hash = slug ? slug : '';
+      history.replaceState(null, '', url);
+    };
+
+    const assemble = (box: HTMLElement) => {
+      let text = '';
+      const walk = (node: Node) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          text += node.textContent ?? '';
+          return;
+        }
+        if (node instanceof HTMLInputElement) {
+          text += node.value || node.dataset.sample || node.dataset.placeholder || '';
+          return;
+        }
+        node.childNodes.forEach(walk);
+      };
+      walk(box);
+      return text;
+    };
+
+    const copyText = async (text: string, button: HTMLButtonElement) => {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        const area = document.createElement('textarea');
+        area.value = text;
+        area.setAttribute('readonly', '');
+        area.style.position = 'fixed';
+        area.style.left = '-9999px';
+        document.body.appendChild(area);
+        area.select();
+        document.execCommand('copy');
+        area.remove();
+      }
+      const previous = button.textContent;
+      button.textContent = 'Copied';
+      button.dataset.copied = 'true';
+      window.setTimeout(() => {
+        button.textContent = previous;
+        delete button.dataset.copied;
+      }, 1600);
+    };
+
+    const apply = () => {
+      const q = query.trim().toLowerCase();
+      const groupCounts: Record<string, number> = {};
+      let visible = 0;
+
+      for (const card of cards) {
+        const matchQuery = !q || (card.dataset.search ?? '').includes(q);
+        const matchView = q
+          ? true
+          : view === 'start'
+            ? Boolean(card.dataset.start)
+            : view === 'all'
+              ? true
+              : (card.dataset.pills ?? '').split(' ').includes(view);
+        const on = matchQuery && matchView;
+        card.hidden = !on;
+        if (on) {
+          visible += 1;
+          const group = card.dataset.group;
+          if (group) groupCounts[group] = (groupCounts[group] || 0) + 1;
+        }
+      }
+
+      const showHeadings = Boolean(q) || view === 'all' || view !== 'start';
+      for (const heading of headings) {
+        const group = heading.dataset.groupH ?? '';
+        heading.hidden = !showHeadings || !groupCounts[group];
+      }
+
+      catalog.dataset.view = q ? 'search' : view;
+      if (countEl) countEl.textContent = visible === 1 ? '1 prompt' : `${visible} prompts`;
+      if (startHeading) startHeading.hidden = !(view === 'start' && !q);
+      if (showAll) showAll.hidden = !(view === 'start' && !q);
+      if (empty) empty.hidden = visible !== 0;
+
+      for (const button of filterButtons) {
+        const id = button.dataset.filter;
+        const on = !q && ((id === 'start' && view === 'start') || id === view);
+        button.classList.toggle('on', on);
+        button.setAttribute('aria-pressed', on ? 'true' : 'false');
+      }
+
+      const filtered = Boolean(q) || view !== 'start';
+      for (const button of clearButtons) button.hidden = !filtered;
+    };
+
+    const openSlug = (slug: string) => {
+      const card = cards.find((item) => item.dataset.slug === slug);
+      if (!card) return;
+      if (card.hidden || (view === 'start' && !card.dataset.start)) {
+        view = 'all';
+      }
+      apply();
+      card.open = true;
+      card.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    };
+
+    searchInput?.addEventListener('input', () => {
+      query = searchInput.value;
+      if (query) view = view === 'start' ? 'all' : view;
+      apply();
+    });
+
+    for (const button of filterButtons) {
+      button.addEventListener('click', () => {
+        query = '';
+        if (searchInput) searchInput.value = '';
+        const id = button.dataset.filter ?? 'start';
+        if (id === 'start') {
+          view = view === 'start' ? 'all' : 'start';
+        } else {
+          view = view === id ? 'all' : id;
+        }
+        apply();
+      });
+    }
+
+    const reset = () => {
+      query = '';
+      view = 'start';
+      if (searchInput) searchInput.value = '';
+      apply();
+    };
+
+    for (const button of clearButtons) button.addEventListener('click', reset);
+
+    showAll?.addEventListener('click', (event) => {
+      event.preventDefault();
+      query = '';
+      view = 'all';
+      if (searchInput) searchInput.value = '';
+      apply();
+    });
+
+    catalog.addEventListener('toggle', (event) => {
+      const card = event.target;
+      if (!(card instanceof HTMLDetailsElement) || !card.dataset.slug) return;
+      if (card.open) {
+        for (const other of cards) {
+          if (other !== card) other.open = false;
+        }
+        setHash(card.dataset.slug);
+      } else if (window.location.hash.slice(1) === card.dataset.slug) {
+        setHash(null);
+      }
+    }, true);
+
+    catalog.addEventListener('click', async (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const button = target.closest<HTMLButtonElement>('[data-copy]');
+      if (!button) return;
+      const box = button.closest('.prompt-box')?.querySelector<HTMLElement>('[data-assemble]');
+      if (!box) return;
+      await copyText(assemble(box), button);
+    });
+
+    catalog.addEventListener('input', (event) => {
+      const input = event.target;
+      if (!(input instanceof HTMLInputElement) || !input.classList.contains('slot')) return;
+      input.size = Math.max(input.value.length, 8);
+    });
+
+    apply();
+
+    const initial = window.location.hash.replace('#', '');
+    if (initial && initial !== 'library') openSlug(initial);
+    window.addEventListener('hashchange', () => {
+      const slug = window.location.hash.replace('#', '');
+      if (slug && slug !== 'library') openSlug(slug);
+    });
+  }
+</script>

@@ -1,48 +1,69 @@
 ---
 import type { Prompt } from '../data/prompts';
+import { pillsOf, previewText, searchBlob } from '../lib/prompt-text';
+import PromptRun from './PromptRun.astro';
 
 interface Props {
   prompt: Prompt;
 }
 
 const { prompt } = Astro.props;
+const preview = previewText(prompt);
+const search = searchBlob(prompt);
+const pills = pillsOf(prompt).join(' ');
 ---
 
-<article class="prompt-card" id={prompt.slug}>
-  {prompt.steps ? (
-    <>
-      <div class="prompt-head">
-        <h3>{prompt.title}</h3>
-      </div>
-      <p class="when">{prompt.when}</p>
-      <p class="step-note">Three turns. Copy each one separately.</p>
-      <div class="steps">
-        {prompt.steps.map((step, index) => {
-          const stepId = `${prompt.slug}-step-${index + 1}`;
-          return (
-            <div class="step">
-              <div class="step-head">
-                <span class="step-label">{step.label}</span>
-                <button type="button" class="copy-btn" data-copy-target={stepId}>
-                  Copy
-                </button>
-              </div>
-              <div class="prompt-text" id={stepId}>{step.text}</div>
-            </div>
-          );
-        })}
-      </div>
-    </>
-  ) : (
-    <>
-      <div class="prompt-head">
-        <h3>{prompt.title}</h3>
-        <button type="button" class="copy-btn" data-copy-target={`${prompt.slug}-text`}>
-          Copy
-        </button>
-      </div>
-      <p class="when">{prompt.when}</p>
-      <div class="prompt-text" id={`${prompt.slug}-text`}>{prompt.text}</div>
-    </>
-  )}
-</article>
+<details
+  class="card"
+  id={prompt.slug}
+  data-slug={prompt.slug}
+  data-group={prompt.group}
+  data-pills={pills}
+  data-search={search}
+  data-start={prompt.startN}
+  style={prompt.startN ? `--ord: ${prompt.startN}` : undefined}
+>
+  <summary>
+    <span class="card-top">
+      <span class="card-title">{prompt.title}</span>
+      {prompt.startN && <span class="start-chip">Start here · {prompt.startN}</span>}
+    </span>
+    <span class="when">{prompt.when}</span>
+    <span class="preview">{preview}</span>
+  </summary>
+
+  <div class="card-body">
+    {prompt.steps ? (
+      <>
+        <p class="card-label">Three turns. Copy each one separately.</p>
+        {prompt.steps.map((step) => (
+          <div class="prompt-box">
+            <p class="step-label">{step.label}</p>
+            <PromptRun text={step.text} />
+            <button type="button" class="copy-btn" data-copy>
+              Copy
+            </button>
+          </div>
+        ))}
+      </>
+    ) : (
+      <>
+        <p class="card-label">{prompt.slots?.length ? 'Fill in and copy' : 'Copy this prompt'}</p>
+        {prompt.slots?.length ? (
+          <p class="slot-hint">
+            Type in the <span class="hint-chip">highlighted</span> slots, then copy.
+          </p>
+        ) : null}
+        <div class="prompt-box">
+          <PromptRun text={prompt.text ?? ''} slots={prompt.slots} />
+          <button type="button" class="copy-btn" data-copy>
+            Copy
+          </button>
+        </div>
+      </>
+    )}
+
+    <p class="why-label">Why this works</p>
+    <p class="why">{prompt.teaches}</p>
+  </div>
+</details>
